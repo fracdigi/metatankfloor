@@ -2,18 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { products } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import {
-  Shield,
+  Wind,
   Droplets,
-  Leaf,
-  Volume2,
-  Flame,
-  Award,
+  Ruler,
+  Bug,
+  Sparkles,
   ArrowRight,
   ArrowDown,
   Plus,
@@ -40,58 +39,66 @@ const staggerParent = {
 const pillars = [
   {
     no: "01",
-    icon: Flame,
-    title: "深層碳化",
-    en: "Deep Carbonization",
-    desc: "200°C 高溫純物理碳化，封閉木材纖維毛細孔，徹底排除蟲卵與黴菌寄生空間，並讓木材本身重新獲得高度尺寸穩定性。",
-    metric: "200°C",
-    unit: "DEGREE",
+    icon: Wind,
+    title: "去除空氣異味",
+    en: "Air Purification",
+    desc: "200°C 高溫碳化活化木材毛細孔，使其持續吸附並分解室內甲醛、TVOC、寵物與烹飪殘留氣味，讓地板成為家中天然的空氣濾網。",
+    metric: "−72%",
+    unit: "ODOR",
   },
   {
     no: "02",
-    icon: Shield,
-    title: "AC6 超耐磨",
-    en: "Wear Resistance",
-    desc: "25,500 轉耐磨等級，遠超商業空間規範。高腳椅滑動、家具拖移、寵物指甲皆無法在表面留下傷痕。",
-    metric: "25,500",
-    unit: "REVOLUTIONS",
+    icon: Droplets,
+    title: "天然吸濕",
+    en: "Moisture Balance",
+    desc: "保留實木天生的呼吸特性。室內過濕時自動吸收水氣，乾燥時釋放，讓家中濕度長期維持在 50–65% 的舒適範圍。",
+    metric: "50–65%",
+    unit: "HUMIDITY",
   },
   {
     no: "03",
-    icon: Droplets,
-    title: "100% 防水",
-    en: "Waterproof",
-    desc: "全結構封閉式防水，淋水 72 小時不變形、不發脹、不發霉。台灣潮濕氣候與廚衛動線的最佳解。",
-    metric: "72H",
-    unit: "FULL SOAK",
+    icon: Ruler,
+    title: "不變形",
+    en: "Dimensional Stability",
+    desc: "深層碳化排除木材纖維中的糖分與水分，纖維重新穩定鎖定。台灣全年高濕高溫的氣候下，地板尺寸變化小於 0.05mm。",
+    metric: "<0.05mm",
+    unit: "WARP",
   },
   {
     no: "04",
-    icon: Leaf,
-    title: "EPA NAF 無醛",
-    en: "Zero Formaldehyde",
-    desc: "通過美國 EPA NAF 無甲醛添加認證，並取得台灣綠建材標章。一進門即可入住，無需通風期。",
-    metric: "0.000",
-    unit: "MG/L",
+    icon: Bug,
+    title: "防蟲蛀",
+    en: "Pest Resistance",
+    desc: "碳化過程徹底破壞蟲卵、白蟻、蛀蟲的寄生環境與營養來源。實木地板史上第一次，不需任何化學藥劑就能天然防蟲。",
+    metric: "100%",
+    unit: "PEST-PROOF",
   },
   {
     no: "05",
-    icon: Volume2,
-    title: "IXPE 吸音降噪",
-    en: "Acoustic Damping",
-    desc: "2mm IXPE 緊密發泡背墊，降低 20dB 樓板撞擊噪音，對樓上孩童奔跑、家具拖移的回響有顯著吸收。",
-    metric: "−20dB",
-    unit: "FOOTSTEP",
+    icon: Sparkles,
+    title: "抗菌防霉",
+    en: "Anti-Microbial",
+    desc: "碳化使木材表面結構緻密化，黴菌與細菌無法附著生長。第三方檢測抗菌率達 99.9%，是過敏體質與兒童家庭的安心選擇。",
+    metric: "99.9%",
+    unit: "ANTIBACTERIAL",
   },
-  {
-    no: "06",
-    icon: Award,
-    title: "雙認證保障",
-    en: "Dual Certification",
-    desc: "杜邦官方授權經銷，附 500 萬產品責任險，並通過台灣綠建材標章、EPA NAF 雙重檢驗。",
-    metric: "500萬",
-    unit: "INSURANCE",
-  },
+];
+
+const heroImages = [
+  "/images/03643999f2d768bafd3f9894e0f90ca5.jpg",
+  "/images/416ce70db464fff733c4c96fdb857415.jpg",
+  "/images/83b4d1c7004e760af698ddc7e62bcaa2.jpg",
+  "/images/de84c0e8e8e6d73744eded24856f9a08.jpg",
+  "/images/4dcc0a9667169a8e97c79a38a26992ca.jpg",
+  "/images/15c0eb29c462c2b7b25f98271a55db56.jpg",
+];
+
+const heroClaims = [
+  { icon: Wind, label: "除異味" },
+  { icon: Droplets, label: "吸濕" },
+  { icon: Ruler, label: "不變形" },
+  { icon: Bug, label: "防蟲蛀" },
+  { icon: Sparkles, label: "抗菌防霉" },
 ];
 
 const layers = [
@@ -201,6 +208,15 @@ export default function Home() {
   const heroY = useTransform(heroProgress, [0, 1], ["0%", "30%"]);
   const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
 
+  const [heroIdx, setHeroIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(
+      () => setHeroIdx((i) => (i + 1) % heroImages.length),
+      5500,
+    );
+    return () => clearInterval(id);
+  }, []);
+
   const featuredProducts = products.slice(0, 8);
 
   return (
@@ -213,14 +229,25 @@ export default function Home() {
         className="relative h-[100svh] min-h-[640px] flex items-end overflow-hidden text-white"
       >
         <motion.div style={{ y: heroY }} className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1618220179428-22790b461013?w=2400&q=90"
-            alt="碳化實木芯地板鋪設於極簡室內空間"
-            fill
-            priority
-            className="object-cover kenburns"
-            sizes="100vw"
-          />
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={heroIdx}
+              initial={{ opacity: 0, scale: 1.06 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1 }}
+              transition={{ opacity: { duration: 1.6, ease }, scale: { duration: 6, ease } }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={heroImages[heroIdx]}
+                alt="杜邦美達坦克碳化實木芯地板實景"
+                fill
+                priority={heroIdx === 0}
+                className="object-cover"
+                sizes="100vw"
+              />
+            </motion.div>
+          </AnimatePresence>
         </motion.div>
         {/* 多層遮罩，讓畫面更具電影感 */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/85" />
@@ -232,7 +259,7 @@ export default function Home() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease, delay: 0.4 }}
-          className="absolute top-8 md:top-12 left-6 md:left-12 flex items-center gap-3 z-20"
+          className="absolute top-8 md:top-12 left-6 md:left-12 z-20 flex items-center gap-3"
         >
           <span className="editorial-rule-light" />
           <span className="text-[10px] tracking-[0.4em] uppercase text-[#EDE7D9]/80">
@@ -257,64 +284,108 @@ export default function Home() {
           style={{ opacity: heroOpacity }}
           className="relative z-20 w-full px-6 md:px-12 pb-16 md:pb-24"
         >
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease, delay: 0.5 }}
-              className="mb-6 flex items-center gap-4"
-            >
-              <span className="editorial-rule-light" />
-              <span className="text-[11px] tracking-[0.4em] uppercase text-[#EDE7D9]/80">
-                Carbonized Solid Wood Core · 碳化實木芯
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, ease, delay: 0.7 }}
-              className="display-xl text-[clamp(2.8rem,8vw,7.5rem)] font-light text-white max-w-5xl"
-            >
-              重新定義
-              <br />
-              <span className="italic font-extralight text-[#EDE7D9]">
-                台灣家屋的地板。
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease, delay: 1 }}
-              className="mt-8 max-w-xl text-base md:text-lg text-[#EDE7D9]/85 leading-relaxed font-light"
-            >
-              200°C 深層碳化的實木芯，封存自然的紋理與溫度；
-              <br className="hidden md:block" />
-              AC6 耐磨表面與 IXPE 靜音背墊，承載家的日常。
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease, delay: 1.2 }}
-              className="mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8"
-            >
-              <Link href="/products">
-                <Button
-                  size="lg"
-                  className="h-14 px-10 text-sm tracking-[0.15em] bg-white text-[#3F2E1E] hover:bg-[#EDE7D9] rounded-none"
-                >
-                  探索 8 款花色
-                  <ArrowRight className="ml-3 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link
-                href="#manifesto"
-                className="text-sm tracking-[0.2em] uppercase text-white/90 link-reveal"
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-12">
+            {/* 左側：標題區 */}
+            <div className="lg:flex-1 lg:min-w-0">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease, delay: 0.5 }}
+                className="mb-6 flex items-center gap-4"
               >
-                了解工藝故事
-              </Link>
+                <span className="editorial-rule-light" />
+                <span className="text-[11px] tracking-[0.4em] uppercase text-[#EDE7D9]/80">
+                  DuPont Authorized · The Breathing Floor
+                </span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.1, ease, delay: 0.7 }}
+                className="display-xl text-[clamp(2rem,4.6vw,4.4rem)] font-light text-white leading-[1.1]"
+              >
+                杜邦美達坦克
+                <br />
+                <span className="font-normal">碳化實木心地板</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease, delay: 0.95 }}
+                className="mt-6 text-[clamp(1.5rem,2.4vw,2.2rem)] italic font-extralight text-[#EDE7D9] tracking-tight"
+              >
+                — 會呼吸的地板。
+              </motion.p>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease, delay: 1.1 }}
+                className="mt-8 max-w-xl text-base md:text-lg text-[#EDE7D9]/85 leading-relaxed font-light"
+              >
+                200°C 深層碳化，喚醒實木芯與生俱來的呼吸特性 ——
+                <br className="hidden md:block" />
+                主動調節濕氣、過濾異味，與家一起緩慢地生活。
+              </motion.p>
+
+              <motion.ul
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease, delay: 1.2 }}
+                className="mt-10 flex flex-wrap gap-2.5 md:gap-3"
+              >
+                {heroClaims.map((c) => (
+                  <li
+                    key={c.label}
+                    className="inline-flex items-center gap-2 border border-white/30 bg-white/5 backdrop-blur-sm px-3.5 py-2 text-[11px] md:text-xs tracking-[0.15em] text-white/90"
+                  >
+                    <c.icon className="h-3.5 w-3.5 text-[#C8A883]" />
+                    {c.label}
+                  </li>
+                ))}
+              </motion.ul>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease, delay: 1.3 }}
+                className="mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8"
+              >
+                <Link href="/products">
+                  <Button
+                    size="lg"
+                    className="h-14 px-10 text-sm tracking-[0.15em] bg-white text-[#3F2E1E] hover:bg-[#EDE7D9] rounded-none"
+                  >
+                    探索 8 款花色
+                    <ArrowRight className="ml-3 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link
+                  href="#manifesto"
+                  className="text-sm tracking-[0.2em] uppercase text-white/90 link-reveal"
+                >
+                  了解工藝故事
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* 右側：杜邦官方授權 Logo（去背 · 與標題並排） */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.2, ease, delay: 0.8 }}
+              className="shrink-0 self-start lg:self-center"
+            >
+              <Image
+                src="/LOGO-AuthorrizedLicensee-2.webp"
+                alt="DuPont Authorized Licensee 杜邦官方授權"
+                width={1140}
+                height={555}
+                priority
+                className="w-[70vw] sm:w-[55vw] lg:w-[43vw] max-w-[680px] h-auto drop-shadow-[0_4px_24px_rgba(0,0,0,0.45)]"
+              />
             </motion.div>
           </div>
         </motion.div>
@@ -324,7 +395,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between text-[10px] tracking-[0.3em] uppercase text-white/70">
             <span>Est. DuPont Licensed · TW</span>
             <span className="hidden md:inline">
-              200°C · AC6 · IXPE · 0 Formaldehyde
+              Breathing · Anti-Odor · Anti-Pest · Anti-Microbial
             </span>
             <span>NT$ 4,880 / Ping</span>
           </div>
@@ -430,18 +501,53 @@ export default function Home() {
 
             <motion.div
               variants={fadeUp}
-              className="lg:col-span-6 order-1 lg:order-2 relative aspect-[4/5] lg:aspect-[3/4]"
+              className="lg:col-span-6 order-1 lg:order-2 relative aspect-[3/4] bg-gradient-to-br from-[#26201A] to-[#15100C] overflow-hidden"
             >
               <Image
-                src="https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?w=1600&q=90"
-                alt="碳化實木紋理特寫"
+                src="/layer.png?v=3"
+                alt="碳化實木芯地板五層結構分解圖"
                 fill
-                className="object-cover"
+                className="object-contain"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-              <div className="absolute inset-0 ring-1 ring-[#C8A883]/20" />
+
+              {/* 五層說明 callouts —— 進入視窗後依序淡入 */}
+              {layers.map((layer, i) => {
+                const tops = [18, 32, 48, 65, 82];
+                return (
+                  <motion.div
+                    key={layer.no}
+                    initial={{ opacity: 0, x: 18 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 0.75, ease, delay: 0.5 + i * 0.28 }}
+                    className="absolute right-3 md:right-5 z-10 -translate-y-1/2 flex items-center gap-2 md:gap-3"
+                    style={{ top: `${tops[i]}%` }}
+                  >
+                    <span className="h-px w-6 md:w-12 bg-[#C8A883]" />
+                    <div className="bg-[#0F0B07]/75 backdrop-blur-sm border border-[#C8A883]/30 px-3 py-2 md:px-4 md:py-3 max-w-[170px] md:max-w-[220px]">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[10px] font-mono tracking-[0.2em] text-[#C8A883]">
+                          {layer.no}
+                        </span>
+                        <span className="text-sm md:text-base font-light text-[#EDE7D9]">
+                          {layer.name}
+                        </span>
+                      </div>
+                      <div className="text-[9px] md:text-[10px] tracking-[0.25em] uppercase text-[#C8A883]/70 mt-0.5">
+                        {layer.en}
+                      </div>
+                      <div className="text-[10px] md:text-[11px] text-[#EDE7D9]/75 mt-1 leading-relaxed">
+                        {layer.detail}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+
+              <div className="absolute inset-0 ring-1 ring-[#C8A883]/20 pointer-events-none" />
               <div className="absolute bottom-4 left-4 text-[10px] tracking-[0.3em] uppercase text-[#EDE7D9]/70">
-                Fig. 01 — Carbonized Core, ×20
+                Fig. 02 — Layered Construction
               </div>
             </motion.div>
           </motion.div>
@@ -460,18 +566,18 @@ export default function Home() {
           className="grid md:grid-cols-12 gap-10 mb-16 md:mb-24"
         >
           <motion.div variants={fadeUp} className="md:col-span-4">
-            <div className="section-num">— 03 / SIX PILLARS</div>
+            <div className="section-num">— 03 / FIVE PROMISES</div>
             <h2 className="mt-4 text-[clamp(2rem,4vw,3.5rem)] font-light leading-[1.05] tracking-tight">
-              六項
+              呼吸地板的
               <br />
-              <span className="italic text-[#A67B5B]">核心承諾。</span>
+              <span className="italic text-[#A67B5B]">五項主張。</span>
             </h2>
           </motion.div>
           <motion.div
             variants={fadeUp}
             className="md:col-span-7 md:col-start-6 text-[#6B5B4F] font-light leading-loose max-w-xl"
           >
-            從表層到芯材，從鎖扣到背墊。每一層結構都對應一個明確的功能與承諾。這不是行銷話術 —— 而是經過第三方實驗室驗證的物理事實。
+            一片真正會呼吸的地板，必須同時做到：自主調節濕氣、過濾室內異味、長期保持不變形，並天然抵禦蟲蛀與菌霉。這五項主張，皆經過第三方實驗室驗證。
           </motion.div>
         </motion.div>
 

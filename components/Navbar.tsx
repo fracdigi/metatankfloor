@@ -34,22 +34,17 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo - 置左 */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-11 h-11 rounded-full overflow-hidden border border-[#D4C9B8]">
-              <Image
-                src="/LOGO-AuthorrizedLicensee-2.webp"
-                alt="杜邦美達坦克 授權經銷商 Logo"
-                fill
-                sizes="44px"
-                className="object-contain p-1"
-                priority
-              />
-            </div>
-            <div className="hidden sm:block">
-              <div className="font-semibold text-xl tracking-tight text-[#3F2E1E]">
-                杜邦美達坦克
-              </div>
-              <div className="text-[10px] text-[#6B5B4F] -mt-1">碳化實木芯地板</div>
-            </div>
+            <Image
+              src="/LOGO-AuthorrizedLicensee-2.webp"
+              alt="DuPont Authorized Licensee 杜邦官方授權"
+              width={1140}
+              height={555}
+              priority
+              className="h-10 sm:h-11 w-auto"
+            />
+            <span className="font-semibold text-base sm:text-lg tracking-tight text-[#3F2E1E] whitespace-nowrap">
+              杜邦碳化實木心地板
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

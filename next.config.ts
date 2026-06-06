@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
       },
     ],
+    // 允許本地圖片帶 query string（用於版本化快取破壞，例如 /layer.png?v=N）
+    localPatterns: [{ pathname: "/**" }],
   },
 };
 
