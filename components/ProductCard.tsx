@@ -20,16 +20,14 @@ export default function ProductCard({ product, showAddButton = true }: ProductCa
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addToCart(product);
-    toast.success(`已加入購物車：${product.name}`, {
-      description: `每坪 NT$${product.pricePerPing.toLocaleString()}`,
+    toast.success(`已加入詢價清單：${product.name}`, {
+      description: "由專人諮詢報價",
       action: {
-        label: "查看購物車",
+        label: "查看詢價清單",
         onClick: () => openCart(),
       },
     });
   };
-
-  const formatPrice = (price: number) => `NT$${price.toLocaleString()}`;
 
   return (
     <Link href={`/product/${product.slug}`} className="group block">
@@ -49,7 +47,7 @@ export default function ProductCard({ product, showAddButton = true }: ProductCa
           />
           <div className="absolute top-3 right-3">
             <div className="price-tag text-xs">
-              每坪 {formatPrice(product.pricePerPing)}
+              由專人諮詢報價
             </div>
           </div>
         </div>
@@ -80,7 +78,7 @@ export default function ProductCard({ product, showAddButton = true }: ProductCa
                 className="bg-[#4A7043] hover:bg-[#3A5A35] text-white h-9 px-4 text-xs"
               >
                 <ShoppingCart className="mr-1.5 h-3.5 w-3.5" />
-                加入購物車
+                加入詢價清單
               </Button>
             )}
           </div>

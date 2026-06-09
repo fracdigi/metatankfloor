@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { products } from "@/lib/products";
+import { knowledgeArticles } from "@/lib/knowledge-articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://dupontmetatank.com";
@@ -8,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/products",
     "/blog",
+    "/knowledge",
     "/cart",
     "/checkout",
   ].map((route) => ({
@@ -22,6 +24,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.9,
+  }));
+
+  const knowledgeRoutes = knowledgeArticles.map((a) => ({
+    url: `${baseUrl}/knowledge/${a.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
   }));
 
   // Blog slugs (we will expand later)
@@ -47,5 +56,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...productRoutes, ...blogRoutes];
+  return [...staticRoutes, ...productRoutes, ...knowledgeRoutes, ...blogRoutes];
 }

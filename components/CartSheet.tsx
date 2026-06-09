@@ -14,11 +14,8 @@ export default function CartSheet() {
     closeCart,
     removeFromCart,
     updateQuantity,
-    totalPrice,
     totalItems,
   } = useCartStore();
-
-  const formatPrice = (price: number) => `NT$${price.toLocaleString()}`;
 
   const handleCheckout = () => {
     closeCart();
@@ -34,7 +31,7 @@ export default function CartSheet() {
       >
         <SheetHeader className="px-6 pt-6 pb-4 border-b">
           <div className="flex items-center justify-between">
-            <SheetTitle className="text-xl">購物車</SheetTitle>
+            <SheetTitle className="text-xl">詢價清單</SheetTitle>
             <SheetClose>
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <X className="h-4 w-4" />
@@ -53,7 +50,7 @@ export default function CartSheet() {
               <div className="w-16 h-16 rounded-full bg-[#EDE7D9] flex items-center justify-center mb-4">
                 <Trash2 className="h-8 w-8 text-[#A67B5B]" />
               </div>
-              <p className="text-lg font-medium mb-2">購物車是空的</p>
+              <p className="text-lg font-medium mb-2">詢價清單是空的</p>
               <p className="text-sm text-[#6B5B4F] mb-6">探索我們的碳化實木芯地板系列</p>
               <SheetClose>
                 <Link href="/products">
@@ -100,7 +97,7 @@ export default function CartSheet() {
                         >
                           <Minus className="h-3.5 w-3.5" />
                         </button>
-                        <span className="px-3 text-sm tabular-nums">{item.quantity}</span>
+                        <span className="px-3 text-sm tabular-nums">{item.quantity} 坪</span>
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           className="px-2 py-1 hover:bg-[#EDE7D9] rounded-r-md"
@@ -109,13 +106,8 @@ export default function CartSheet() {
                         </button>
                       </div>
 
-                      <div className="text-right">
-                        <div className="font-medium tabular-nums">
-                          {formatPrice(item.pricePerPing * item.quantity)}
-                        </div>
-                        <div className="text-[10px] text-[#6B5B4F]">
-                          每坪 {formatPrice(item.pricePerPing)}
-                        </div>
+                      <div className="text-right text-[11px] text-[#6B5B4F]">
+                        由專人諮詢報價
                       </div>
                     </div>
                   </div>
@@ -129,13 +121,11 @@ export default function CartSheet() {
         {items.length > 0 && (
           <div className="border-t bg-white p-6 space-y-4">
             <div className="flex justify-between text-sm">
-              <span className="text-[#6B5B4F]">預估總金額</span>
-              <span className="font-semibold text-lg tabular-nums tracking-tight">
-                {formatPrice(totalPrice())}
-              </span>
+              <span className="text-[#6B5B4F]">報價方式</span>
+              <span className="font-medium text-[#3F2E1E]">由專人諮詢報價</span>
             </div>
             <p className="text-xs text-[#6B5B4F] -mt-1">
-              ※ 實際金額依最終坪數與施工條件計算，專人將於 24 小時內報價
+              ※ 我們將依花色、坪數、安裝條件客製報價，專員於 24 小時內主動聯繫
             </p>
 
             <div className="space-y-2 pt-2">
@@ -143,7 +133,7 @@ export default function CartSheet() {
                 onClick={handleCheckout}
                 className="w-full h-12 bg-[#A67B5B] hover:bg-[#8B6649] text-white text-base"
               >
-                去結帳
+                送出詢價
               </Button>
               <SheetClose>
                 <Button variant="outline" className="w-full border-[#D4C9B8]">

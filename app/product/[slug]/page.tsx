@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { products, getProductBySlug } from "@/lib/products";
-import { Button } from "@/components/ui/button";
 import { Metadata } from "next";
 import AddToCartButton from "@/components/AddToCartButton";
 
@@ -27,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${product.name} | 杜邦美達坦克 碳化實木芯地板`,
-    description: `${product.name} - ${product.description} AC6超耐磨、200°C深層碳化實木芯、綠建材標章，每坪 NT$${product.pricePerPing}。適合小孩寵物家庭。`,
+    description: `${product.name} - ${product.description} AC6超耐磨、200°C深層碳化實木芯、綠建材標章，由專人諮詢報價。適合小孩寵物家庭。`,
     openGraph: {
       title: `${product.name} - 杜邦美達坦克碳化實木芯地板`,
       description: product.description,
@@ -73,8 +72,8 @@ export default async function ProductDetailPage({ params }: Props) {
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-3">{product.name}</h1>
           
           <div className="inline-flex items-center gap-2 mb-6">
-            <span className="price-tag">每坪 NT${product.pricePerPing.toLocaleString()}</span>
-            <span className="text-xs text-[#6B5B4F]">含稅 · 含基礎安裝諮詢</span>
+            <span className="price-tag">由專人諮詢報價</span>
+            <span className="text-xs text-[#6B5B4F]">含丈量 · 安裝建議 · 樣品索取</span>
           </div>
 
           <p className="text-lg text-[#6B5B4F] leading-relaxed mb-8">

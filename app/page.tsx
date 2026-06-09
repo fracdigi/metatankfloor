@@ -192,7 +192,7 @@ const faqs: [string, string][] = [
   ],
   [
     "價格如何計算？需要多少預算？",
-    "以「每坪」計價，建議購買量為實際坪數 × 1.08（含損耗）。一般 30 坪住宅地板材料約 NT$ 14–16 萬，含安裝約 NT$ 18–22 萬。我們會依現場丈量提供精準報價。",
+    "我們依坪數、花色、安裝條件由專人客製報價。建議購買量為實際坪數 × 1.08（含損耗），請填寫聯絡資訊，杜邦美達坦克授權專員將於 24 小時內主動聯繫，提供現場丈量與精準報價。",
   ],
 ];
 
@@ -397,7 +397,7 @@ export default function Home() {
             <span className="hidden md:inline">
               Breathing · Anti-Odor · Anti-Pest · Anti-Microbial
             </span>
-            <span>NT$ 4,880 / Ping</span>
+            <span>由專人諮詢報價</span>
           </div>
         </div>
       </section>

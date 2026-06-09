@@ -129,8 +129,9 @@ export default function CheckoutPage() {
         <div className="bg-white p-8 rounded-2xl text-left max-w-md mx-auto border">
           <p className="text-sm mb-4 font-medium">您也可以直接聯絡我們：</p>
           <div className="space-y-2 text-sm">
-            <div>電話：<a href="tel:02-1234-5678" className="text-[#A67B5B]">02-1234-5678</a></div>
+            <div>電話：<a href="tel:0922885566" className="text-[#A67B5B]">0922-885-566</a></div>
             <div>Email：<a href="mailto:service@dupontmetatank.com.tw" className="text-[#A67B5B]">service@dupontmetatank.com.tw</a></div>
+            <div>地址：台北市大安區師大路 110 號 B1</div>
           </div>
         </div>
 

@@ -36,19 +36,22 @@ export default function Footer() {
             <div className="font-medium text-white mb-4 tracking-wide text-sm">聯絡我們</div>
             <div className="space-y-2.5 text-sm text-[#C5B9A6]">
               <p>專人報價與施工諮詢</p>
-              <a 
-                href="tel:02-1234-5678" 
+              <a
+                href="tel:0922885566"
                 className="block text-white hover:underline font-medium"
               >
-                (02) 1234-5678
+                0922-885-566
               </a>
-              <a 
-                href="mailto:service@dupontmetatank.com.tw" 
+              <a
+                href="mailto:service@dupontmetatank.com.tw"
                 className="block hover:text-white transition-colors"
               >
                 service@dupontmetatank.com.tw
               </a>
-              <p className="pt-2 text-xs">服務時間：週一至週五 09:00-18:00</p>
+              <p className="pt-2 leading-relaxed">
+                台北市大安區師大路 110 號 B1
+              </p>
+              <p className="pt-1 text-xs">服務時間：週一至週五 09:00-18:00</p>
             </div>
           </div>
 

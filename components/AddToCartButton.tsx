@@ -15,10 +15,10 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
 
   const handleAdd = () => {
     addToCart(product);
-    toast.success(`已加入購物車：${product.name}`, {
-      description: `每坪 NT$${product.pricePerPing.toLocaleString()}`,
+    toast.success(`已加入詢價清單：${product.name}`, {
+      description: "由專人諮詢報價",
       action: {
-        label: "查看購物車",
+        label: "查看詢價清單",
         onClick: () => openCart(),
       },
     });
@@ -31,7 +31,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
         size="lg"
         className="h-14 flex-1 bg-[#A67B5B] hover:bg-[#8B6649] text-base"
       >
-        加入購物車
+        加入詢價清單
       </Button>
       <Link href="/products" className="flex-1 sm:flex-none">
         <Button variant="outline" size="lg" className="w-full h-14 border-[#A67B5B] text-[#A67B5B]">

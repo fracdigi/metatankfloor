@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/", label: "首頁" },
   { href: "/products", label: "產品" },
   { href: "/#features", label: "特色" },
+  { href: "/knowledge", label: "地板知識QA" },
   { href: "/blog", label: "部落格" },
   { href: "#contact", label: "聯絡我們" },
 ];
