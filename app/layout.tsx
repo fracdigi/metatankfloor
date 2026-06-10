@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans_TC } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar";
@@ -23,6 +24,9 @@ const notoSansTC = Noto_Sans_TC({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
+
+// Google Analytics 4（可用環境變數 NEXT_PUBLIC_GA_ID 覆寫）
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-7RVTNQRNRS";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -73,6 +77,22 @@ export default function RootLayout({
         <CartSheet />
         <Toaster position="top-center" richColors closeButton />
       </body>
+      {GA_ID && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_ID}');
+            `}
+          </Script>
+        </>
+      )}
     </html>
   );
 }
