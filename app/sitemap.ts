@@ -3,7 +3,7 @@ import { products } from "@/lib/products";
 import { knowledgeArticles } from "@/lib/knowledge-articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://dupontmetatank.com";
+  const baseUrl = "https://metatankfloor.pynstone.com";
 
   const staticRoutes = [
     "",

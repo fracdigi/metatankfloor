@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   alternates: {
-    canonical: "https://dupontmetatank.com",
+    canonical: "https://metatankfloor.pynstone.com",
   },
 };
 
