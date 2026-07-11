@@ -1,58 +1,44 @@
 import { MetadataRoute } from "next";
 import { products } from "@/lib/products";
 import { knowledgeArticles } from "@/lib/knowledge-articles";
+import { blogArticles } from "@/lib/blog-articles";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://metatank.tw";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://metatankfloor.pynstone.com";
+  const now = new Date();
 
-  const staticRoutes = [
-    "",
-    "/products",
-    "/blog",
-    "/knowledge",
-    "/cart",
-    "/checkout",
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: route === "" ? 1 : 0.8,
+  const staticRoutes: MetadataRoute.Sitemap = [
+    { path: "", priority: 1, changeFrequency: "weekly" as const },
+    { path: "/products", priority: 0.9, changeFrequency: "weekly" as const },
+    { path: "/knowledge", priority: 0.8, changeFrequency: "weekly" as const },
+    { path: "/blog", priority: 0.8, changeFrequency: "weekly" as const },
+  ].map(({ path, priority, changeFrequency }) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified: now,
+    changeFrequency,
+    priority,
   }));
 
-  const productRoutes = products.map((product) => ({
-    url: `${baseUrl}/product/${product.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+  const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
+    url: `${SITE_URL}/product/${product.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
     priority: 0.9,
   }));
 
-  const knowledgeRoutes = knowledgeArticles.map((a) => ({
-    url: `${baseUrl}/knowledge/${a.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+  const knowledgeRoutes: MetadataRoute.Sitemap = knowledgeArticles.map((a) => ({
+    url: `${SITE_URL}/knowledge/${a.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
     priority: 0.75,
   }));
 
-  // Blog slugs (we will expand later)
-  const blogSlugs = [
-    "carbonized-vs-solid-wood",
-    "waterproof-test",
-    "ac6-vs-ac4-vs-spc",
-    "kids-pets-floor",
-    "2026-price-list",
-    "green-building-cert",
-    "click-lock-install",
-    "humidity-control",
-    "spc-vs-carbonized-wood",
-    "why-authorized-dealer",
-    "mold-insect-solution",
-    "2026-design-trend",
-  ];
-
-  const blogRoutes = blogSlugs.map((slug) => ({
-    url: `${baseUrl}/blog/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+  const blogRoutes: MetadataRoute.Sitemap = blogArticles.map((a) => ({
+    url: `${SITE_URL}/blog/${a.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
     priority: 0.7,
   }));
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
   knowledgeArticles,
@@ -11,6 +12,9 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://metatank.tw";
+
 export function generateStaticParams() {
   return knowledgeArticles.map((a) => ({ slug: a.slug }));
 }
@@ -20,14 +24,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = getKnowledgeBySlug(slug);
   if (!article) return { title: "找不到文章" };
 
+  const url = `${SITE_URL}/knowledge/${article.slug}`;
   return {
     title: `${article.title} | 杜邦美達坦克 地板知識 QA`,
     description: article.excerpt,
     keywords: article.keywords.join(", "),
+    alternates: { canonical: url },
     openGraph: {
       title: article.title,
       description: article.excerpt,
+      url,
       type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt,
     },
   };
 }
@@ -37,6 +49,63 @@ export default async function KnowledgeArticlePage({ params }: Props) {
   const article = getKnowledgeBySlug(slug);
   if (!article) notFound();
 
+  const articleUrl = `${SITE_URL}/knowledge/${article.slug}`;
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    inLanguage: "zh-TW",
+    keywords: article.keywords.join(", "),
+    mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
+    author: { "@type": "Organization", name: "杜邦美達坦克 授權經銷商" },
+    publisher: {
+      "@type": "Organization",
+      name: "杜邦美達坦克 碳化實木芯地板",
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/LOGO-AuthorrizedLicensee-2.webp`,
+      },
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "地板知識 QA",
+        item: `${SITE_URL}/knowledge`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: article.categoryLabel,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: article.title,
+        item: articleUrl,
+      },
+    ],
+  };
+
+  const faqJsonLd =
+    article.faq && article.faq.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: article.faq.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }
+      : null;
+
   // 上下篇導航
   const idx = knowledgeArticles.findIndex((a) => a.slug === slug);
   const prev = idx > 0 ? knowledgeArticles[idx - 1] : null;
@@ -45,6 +114,23 @@ export default async function KnowledgeArticlePage({ params }: Props) {
 
   return (
     <div className="bg-[#F5F0E8] text-[#3F2E1E]">
+      <Script
+        id={`article-jsonld-${article.slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <Script
+        id={`breadcrumb-jsonld-${article.slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      {faqJsonLd && (
+        <Script
+          id={`faq-jsonld-${article.slug}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <article className="max-w-3xl mx-auto px-6 md:px-12 py-16 md:py-24">
         {/* Breadcrumb */}
         <div className="text-xs tracking-[0.2em] uppercase text-[#6B5B4F] mb-8 flex items-center gap-2">

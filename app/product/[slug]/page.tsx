@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import Script from "next/script";
 import { products, getProductBySlug } from "@/lib/products";
 import { Metadata } from "next";
 import AddToCartButton from "@/components/AddToCartButton";
@@ -8,6 +9,9 @@ import AddToCartButton from "@/components/AddToCartButton";
 interface Props {
   params: Promise<{ slug: string }>;
 }
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://metatank.tw";
 
 // Generate static pages for all products (excellent for SEO)
 export async function generateStaticParams() {
@@ -24,13 +28,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "找不到產品" };
   }
 
+  const url = `${SITE_URL}/product/${product.slug}`;
   return {
     title: `${product.name} | 杜邦美達坦克 碳化實木芯地板`,
     description: `${product.name} - ${product.description} AC6超耐磨、200°C深層碳化實木芯、綠建材標章，由專人諮詢報價。適合小孩寵物家庭。`,
+    alternates: { canonical: url },
     openGraph: {
       title: `${product.name} - 杜邦美達坦克碳化實木芯地板`,
       description: product.description,
-      images: [{ url: product.image }],
+      url,
+      type: "website",
+      images: [{ url: product.image, alt: product.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description: product.description,
+      images: [product.image],
     },
   };
 }
@@ -43,8 +57,71 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
+  const productUrl = `${SITE_URL}/product/${product.slug}`;
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    sku: product.model,
+    mpn: product.model,
+    brand: { "@type": "Brand", name: "DuPont MetaTank" },
+    description: product.description,
+    image: product.image,
+    url: productUrl,
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "尺寸", value: product.size },
+      { "@type": "PropertyValue", name: "厚度", value: product.thickness },
+      { "@type": "PropertyValue", name: "耐磨層", value: product.wearLayer },
+      { "@type": "PropertyValue", name: "芯板技術", value: product.core },
+    ],
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "TWD",
+      price: product.pricePerPing,
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: product.pricePerPing,
+        priceCurrency: "TWD",
+        unitText: "PING",
+      },
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: productUrl,
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "產品列表",
+        item: `${SITE_URL}/products`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: product.name,
+        item: productUrl,
+      },
+    ],
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
+      <Script
+        id={`product-jsonld-${product.slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <Script
+        id={`breadcrumb-jsonld-${product.slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="text-sm mb-8 text-[#6B5B4F]">
         <Link href="/products" className="hover:text-[#A67B5B]">產品列表</Link> / {product.name}
       </div>
