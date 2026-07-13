@@ -82,11 +82,6 @@ export default async function KnowledgeArticlePage({ params }: Props) {
       {
         "@type": "ListItem",
         position: 2,
-        name: article.categoryLabel,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
         name: article.title,
         item: articleUrl,
       },
